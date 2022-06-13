@@ -40,7 +40,7 @@ class MeetupController {
       return next(ErrorApi.badRequest("ID is not fount"));
     }
     const { title, content, meetupDate, meetupLocation, keywords } = req.body;
-    const meetup = await Meetup.update(
+    await Meetup.update(
       {
         title: title,
         content: content,
@@ -51,7 +51,7 @@ class MeetupController {
       { where: { id: id } },
       { multi: true }
     );
-    return res.json(meetup);
+    return res.status(200).json({ message: "Updated" });
   }
 
   async delete(req, res, next) {
