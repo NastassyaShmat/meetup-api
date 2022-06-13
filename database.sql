@@ -1,0 +1,17 @@
+-- create TABLE user {
+-- 	id SERIAL PRIMARY KEY,
+-- 	firstName VARCHAR(255),
+-- 	lastName VARCHAR(255),
+-- 	email VARCHAR(255)
+-- };
+
+-- create TABLE meetups {
+-- 	id SERIAL PRIMARY KEY,
+-- 	title VARCHAR(255),
+-- 	content VARCHAR(255),
+-- 	keywords VARCHAR(255),
+-- 	meetupLocation VARCHAR(255),
+-- 	meetupDate DATA
+-- 	user_id INTEGER,
+-- 	FOREIGN KEY (user_id) REFERENCES person (id)
+-- }
