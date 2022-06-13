@@ -7,3 +7,4 @@ router.use("/user", userRouter);
 router.use("/meetup", meetupRouter);
 
 module.exports = router;
+ 

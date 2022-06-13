@@ -1,11 +1,11 @@
-const Router = require('express');
-
+const Router = require("express");
 const router = new Router();
+const meetupController = require("../controllers/meetupController");
 
-router.post('/')
-router.get('/:id') 
-router.get('/') 
-router.put('/:id') 
-router.delete('/:id') 
+router.post("/", meetupController.create);
+router.get("/:id", meetupController.getById);
+router.get("/", meetupController.getAll);
+router.put("/:id", meetupController.update);
+router.delete("/:id", meetupController.delete);
 
 module.exports = router;
