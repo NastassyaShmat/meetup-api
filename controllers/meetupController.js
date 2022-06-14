@@ -1,5 +1,6 @@
 const { Meetup } = require("../models/models");
 const ErrorApi = require("../error/errorApi");
+const { validationResult } = require("express-validator");
 
 class MeetupController {
   async getAll(req, res) {
@@ -18,6 +19,10 @@ class MeetupController {
 
   async create(req, res, next) {
     try {
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        next(ErrorApi.badRequest("Validation error", validationErrors.array()));
+      }
       const { meetupId, title, content, meetupDate, meetupLocation, keywords } =
         req.body;
       const meetup = await Meetup.create({

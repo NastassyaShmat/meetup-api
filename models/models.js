@@ -17,7 +17,7 @@ const Meetup = sequelize.define("meetup", {
   content: { type: DataTypes.STRING },
   keywords: { type: DataTypes.STRING },
   meetupLocation: { type: DataTypes.STRING },
-  meetupDate: { type: DataTypes.DATE },
+  meetupDate: { type: DataTypes.STRING },
 });
 
 User.hasMany(Meetup);

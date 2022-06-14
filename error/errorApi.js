@@ -1,12 +1,15 @@
 class ErrorApi extends Error {
-  constructor(status, message) {
-    super();
-    this.status = status;
-    this.message = message;
-  } 
+  status;
+  errors;
 
-  static badRequest(message) {
-    return new ErrorApi(404, message);
+  constructor(status, message, errors) {
+    super(message);
+    this.status = status;
+    this.errors = errors;
+  }
+
+  static badRequest(message, errors) {
+    return new ErrorApi(404, message, errors);
   }
   static internal(message) {
     return new ErrorApi(500, message);
@@ -14,9 +17,9 @@ class ErrorApi extends Error {
   static forbidden(message) {
     return new ErrorApi(403, message);
   }
-  static unauthorized(message) {
-    return new ErrorApi(401, message);
+  static unauthorized() {
+    return new ErrorApi(401, "User is not authorized");
   }
 }
 
-module.exports = ErrorApi
+module.exports = ErrorApi;
