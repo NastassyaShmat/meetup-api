@@ -4,33 +4,24 @@ const { validationResult } = require("express-validator");
 
 class MeetupController {
   async getAll(req, res) {
-    let { title, content, limit, page } = req.query;
+    let { keywords, limit, page } = req.query;
     page = page || 1;
     limit = limit || 5;
     let offset = page * limit - limit;
     let meetups;
-    if (!title && !content) {
-      meetups = await Meetup.findAndCountAll({ limit, offset });
-    }
-    if (!title && content) {
+    if (!keywords) {
       meetups = await Meetup.findAndCountAll({
-        where: { content },
         limit,
         offset,
+        order: [["meetupDate"]],
       });
     }
-    if (title && !content) {
+    if (keywords) {
       meetups = await Meetup.findAndCountAll({
-        where: { title },
+        where: { keywords },
         limit,
         offset,
-      });
-    }
-    if (title && content) {
-      meetups = await Meetup.findAndCountAll({
-        where: { title, content },
-        limit,
-        offset,
+        order: [["meetupDate"]],
       });
     }
     return res.json(meetups);
