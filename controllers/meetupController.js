@@ -1,39 +1,39 @@
-const { Meetup } = require("../models/models");
 const ErrorApi = require("../error/errorApi");
 const { validationResult } = require("express-validator");
+const meetupService = require("../services/meetupService");
+const MeetupDto = require("../dto/meetupDto");
 
 class MeetupController {
-  async getAll(req, res) {
-    let { keywords, limit, page } = req.query;
-    page = page || 1;
-    limit = limit || 5;
-    let offset = page * limit - limit;
-    let meetups;
-    if (!keywords) {
-      meetups = await Meetup.findAndCountAll({
-        limit,
-        offset,
-        order: [["meetupDate"]],
-      });
+  async getAll(req, res, next) {
+    try {
+      let { keywords, limit, page } = req.query;
+      page = page || 1;
+      limit = limit || 5;
+      let offset = page * limit - limit;
+      let meetups;
+      if (!keywords) {
+        meetups = await meetupService.getAll(limit, offset);
+      }
+      if (keywords) {
+        meetups = await meetupService.getAllByKeywords(limit, offset, keywords);
+      }
+      return res.json(meetups);
+    } catch (e) {
+      next(e);
     }
-    if (keywords) {
-      meetups = await Meetup.findAndCountAll({
-        where: { keywords },
-        limit,
-        offset,
-        order: [["meetupDate"]],
-      });
-    }
-    return res.json(meetups);
   }
 
   async getById(req, res, next) {
-    const { id } = req.params;
-    const meetup = await Meetup.findOne({ where: { id } });
-    if (!meetup) {
-      return next(ErrorApi.badRequest("ID is not fount"));
+    try {
+      const { id } = req.params;
+      const meetup = await meetupService.getById(id);
+      if (!meetup) {
+        next(ErrorApi.badRequest("ID is not fount"));
+      }
+      return res.json(meetup);
+    } catch (e) {
+      next(e);
     }
-    return res.json(meetup);
   }
 
   async create(req, res, next) {
@@ -42,49 +42,46 @@ class MeetupController {
       if (!validationErrors.isEmpty()) {
         next(ErrorApi.badRequest("Validation error", validationErrors.array()));
       }
-      const { meetupId, title, content, meetupDate, meetupLocation, keywords } =
-        req.body;
-      const meetup = await Meetup.create({
-        meetupId,
-        title,
-        content,
-        meetupDate,
-        meetupLocation,
-        keywords,
-      });
+      const meetupDto = new MeetupDto(req.body);
+      const meetup = await meetupService.create(meetupDto);
       return res.json(meetup);
     } catch (e) {
-      return next(ErrorApi.badRequest(e.message));
+      next(e);
     }
   }
 
   async update(req, res, next) {
-    const { id } = req.params;
-    if (!id) {
-      return next(ErrorApi.badRequest("ID is not fount"));
+    try {
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        next(ErrorApi.badRequest("Validation error", validationErrors.array()));
+      }
+      const { id } = req.params;
+      const meetupDto = new MeetupDto(req.body);
+      const meetup = await meetupService.getById(id);
+      if (!meetup) {
+        next(ErrorApi.badRequest("ID is not fount"));
+      }
+      await meetupService.update(meetupDto, id);
+
+      return res.status(200).json({ message: "Updated" });
+    } catch (e) {
+      next(e);
     }
-    const { title, content, meetupDate, meetupLocation, keywords } = req.body;
-    await Meetup.update(
-      {
-        title: title,
-        content: content,
-        meetupDate: meetupDate,
-        meetupLocation: meetupLocation,
-        keywords: keywords,
-      },
-      { where: { id: id } },
-      { multi: true }
-    );
-    return res.status(200).json({ message: "Updated" });
   }
 
   async delete(req, res, next) {
-    const { id } = req.params;
-    if (!id) {
-      return next(ErrorApi.badRequest("ID is not fount"));
+    try {
+      const { id } = req.params;
+      const meetup = await meetupService.getById(id);
+      if (!meetup || !id) {
+        return next(ErrorApi.badRequest("ID is not fount"));
+      }
+      await meetupService.destroy(id);
+      return res.status(204).json({ message: "No Content" });
+    } catch (e) {
+      next(e);
     }
-    await Meetup.destroy({ where: { id } });
-    return res.status(204).json({ message: "No Content" });
   }
 }
 

@@ -12,7 +12,12 @@ router.post(
 );
 router.get("/:id", meetupController.getById);
 router.get("/", meetupController.getAll);
-router.put("/:id", meetupController.update);
-router.delete("/:id", meetupController.delete);
+router.put(
+  "/:id",
+  checkRole("ADMIN"),
+  body("meetupDate").isISO8601(),
+  meetupController.update
+);
+router.delete("/:id", checkRole("ADMIN"), meetupController.delete);
 
 module.exports = router;
