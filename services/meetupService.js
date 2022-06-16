@@ -1,5 +1,4 @@
 const { Meetup } = require("../models/models");
-const ErrorApi = require("../error/errorApi");
 
 class MeetupService {
   async getAll(limit, offset) {

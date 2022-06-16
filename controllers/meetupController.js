@@ -28,7 +28,7 @@ class MeetupController {
       const { id } = req.params;
       const meetup = await meetupService.getById(id);
       if (!meetup) {
-        next(ErrorApi.badRequest("ID is not fount"));
+        next(ErrorApi.notFound("ID is not fount"));
       }
       return res.json(meetup);
     } catch (e) {
@@ -60,7 +60,7 @@ class MeetupController {
       const meetupDto = new MeetupDto(req.body);
       const meetup = await meetupService.getById(id);
       if (!meetup) {
-        next(ErrorApi.badRequest("ID is not fount"));
+        next(ErrorApi.notFound("ID is not fount"));
       }
       await meetupService.update(meetupDto, id);
 
@@ -75,7 +75,7 @@ class MeetupController {
       const { id } = req.params;
       const meetup = await meetupService.getById(id);
       if (!meetup || !id) {
-        return next(ErrorApi.badRequest("ID is not fount"));
+         next(ErrorApi.notFound("ID is not fount"));
       }
       await meetupService.destroy(id);
       return res.status(204).json({ message: "No Content" });

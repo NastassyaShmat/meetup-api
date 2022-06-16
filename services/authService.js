@@ -7,8 +7,7 @@ class AuthService {
   async registration(userDto) {
     const candidate = await userService.getOneByEmail(userDto.email);
     if (candidate) {
-      const token = this.chekPassword(candidate, userDto.password);
-      return token;
+      throw new Error(`User with email ${userDto.email} has already existed`);
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
     const user = await userService.create(userDto, hashPassword);
@@ -16,10 +15,14 @@ class AuthService {
     return token;
   }
 
-  async chekPassword(user, password) {
+  async validateUser(email, password) {
+    const user = await userService.getOneByEmail(email);
+    if (!user) {
+      throw new Error("User is not authorized");
+    }
     const comparePassword = bcrypt.compareSync(password, user.password);
     if (!comparePassword) {
-      return ErrorApi.forbidden("Password is not correct");
+      throw new Error("Password is not correct");
     }
     const token = this.generateJwt(user.id, user.email, user.role);
     return token;

@@ -3,7 +3,7 @@ const router = new Router();
 const userRouter = require("./userRouter");
 const meetupRouter = require("./meetupRouter");
 
-router.use("/user", userRouter);
+router.use("/auth", userRouter);
 router.use("/meetup", meetupRouter);
 
 module.exports = router;

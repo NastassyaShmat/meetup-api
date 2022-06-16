@@ -10,7 +10,6 @@ router.post(
   body("password").isLength({ min: 4, max: 16 }).isString(),
   authController.registration
 );
-//router.post("/login", userController.login);
-//router.get("/auth", authMiddleware, userController.checkAuth);
+router.post("/login", authController.login);
 
 module.exports = router;
