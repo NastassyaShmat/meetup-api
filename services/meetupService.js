@@ -1,31 +1,28 @@
 const { Meetup } = require("../models/models");
 
 class MeetupService {
-  async getAll(limit, offset) {
+  async getAll(limit, offset, sort) {
     const meetups = await Meetup.findAndCountAll({
       limit,
       offset,
-      order: [["meetupDate"]],
+      order: [[sort]],
     });
     return meetups;
   }
 
-  async getAllByKeywords(limit, offset, keywords) {
-    // const allmeetups = await Meetup.findAndCountAll({
-    //   limit,
-    //   offset,
-    //   order: [["meetupDate"]],
-    // });
-    // meetups = allmeetups.rows.filter((meetup) =>
-    //   meetup.dataValues.keywords.includes(key)
-    // );
-    const meetups = await Meetup.findAndCountAll({
-      where: { keywords },
+  async getAllByKeywords(limit, offset, sort, keywords) {
+    const allmeetups = await Meetup.findAndCountAll({
       limit,
       offset,
-      order: [["meetupDate"]],
+      order: [[sort]],
     });
-    return meetups;
+    const meetups = allmeetups.rows.filter((meetup) =>
+      meetup.dataValues.keywords.includes(keywords)
+    );
+    return {
+      count: meetups.length,
+      rows: meetups,
+    };
   }
 
   async getById(id) {
@@ -33,8 +30,8 @@ class MeetupService {
     return meetup;
   }
 
-  async create(meetupDto) {
-    const meetup = await Meetup.create(meetupDto);
+  async create(meetupDto, userId) {
+    const meetup = await Meetup.create({ ...meetupDto, userId });
     return meetup;
   }
 
@@ -49,7 +46,6 @@ class MeetupService {
   async delete(id) {
     return await Meetup.destroy(id);
   }
-
 }
 
 module.exports = new MeetupService();

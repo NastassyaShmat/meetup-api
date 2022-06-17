@@ -1,0 +1,355 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Meetup API",
+    "version": "1.0.0",
+    "description": "This is a CRUD REST Web API application made with Express for work with meetups."
+  },
+  "tags": [
+    {
+      "name": "Meetup",
+      "description": "Operations about meetups"
+    },
+    {
+      "name": "User",
+      "description": "Login and registration in system"
+    }
+  ],
+  "schemes": "http",
+  "paths": {
+    "/meetup": {
+      "post": {
+        "tags": ["Meetup"],
+        "name": "body",
+        "summary": "Create a new Meetup",
+        "description": "You can add new meetup to the list",
+        "operationId": "create",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Meetup object that needs to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Meetup"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Validation exeption"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "get": {
+        "tags": ["Meetup"],
+        "summary": "Find Meetup by keywords",
+        "description": "You can look at all meetups which you want",
+        "operationId": "getAll",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "keywords",
+            "in": "query",
+            "description": "Keywords that need to be considered for filter",
+            "type": "string"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The numbers of items to return",
+            "type": "integer"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The numbers of items to return on page",
+            "type": "integer"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "The parameter to sort returned items",
+            "type": "string"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "The number of items to skip before starting to collect the result set",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Meetup"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/meetup/{id}": {
+      "get": {
+        "tags": ["Meetup"],
+        "summary": "Find Meetup by ID",
+        "description": "You can find Meetup by ID",
+        "operationId": "getById",
+        "produces": ["application/json"],
+        "parameters": {
+          "name": "meetupId",
+          "in": "path",
+          "description": "ID that need to be considered for search",
+          "required": true,
+          "type": "integer",
+          "minimum": "1"
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Meetup"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Meetup do not exist"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "put": {
+        "tags": ["Meetup"],
+        "summary": "Update an existing meetup",
+        "description": "",
+        "operationId": "update",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Meetup object that needs to be updated",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Meetup"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Meetup not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Meetup"],
+        "summary": "Delete meetup",
+        "description": "",
+        "operationId": "delete",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "meetupId",
+            "description": "Delete meetup object",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Meetup not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/auth/": {
+      "post": {
+        "tags": ["User"],
+        "name": "body",
+        "summary": "Registration new User in system",
+        "description": "You can register in the system",
+        "operationId": "registration",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data to register in the system",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "405": {
+            "description": "Validation exeption"
+          },
+          "400": {
+            "description": "User has already existed"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["User"],
+        "name": "body",
+        "summary": "Log in the system",
+        "description": "You can log in the system",
+        "operationId": "login",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data to login in the system",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "405": {
+            "description": "Validation exeption"
+          },
+          "400": {
+            "description": "User do not exist"
+          }
+        }
+      }
+    }
+  },
+  "conponents": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "definitions": {
+    "Meetup": {
+      "type": "object",
+      "required": true,
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Node.js 2022"
+        },
+        "content": {
+          "type": "string",
+          "example": "Node.js. How does it work behind the scence?"
+        },
+        "keywords": {
+          "type": "string",
+          "example": "node.js, js, V8, libuv"
+        },
+        "meetupDate": {
+          "type": "string",
+          "example": "Meetup date"
+        },
+        "meetupLocation": {
+          "type": "string",
+          "example": "Meetup location"
+        }
+      },
+      "xml": {
+        "name": "Meetup"
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "Shkutovich"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Nastassia"
+        },
+        "email": {
+          "type": "string",
+          "example": "example@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "example123"
+        },
+        "role": {
+          "type": "string",
+          "example": "USER"
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    }
+  },
+  "apis": ["./routes/*.js"]
+}

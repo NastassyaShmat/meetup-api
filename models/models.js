@@ -20,7 +20,9 @@ const Meetup = sequelize.define("meetup", {
   meetupDate: { type: DataTypes.STRING },
 });
 
-User.hasMany(Meetup);
+User.hasMany(Meetup, {
+  foreignKey: "userId",
+});
 Meetup.belongsTo(User);
 
 module.exports = {

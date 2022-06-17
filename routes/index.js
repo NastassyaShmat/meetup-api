@@ -7,4 +7,3 @@ router.use("/auth", userRouter);
 router.use("/meetup", meetupRouter);
 
 module.exports = router;
- 

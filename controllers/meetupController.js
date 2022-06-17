@@ -6,16 +6,17 @@ const MeetupDto = require("../dto/meetupDto");
 class MeetupController {
   async getAll(req, res, next) {
     try {
-      let { keywords, limit, page } = req.query;
+      let { keywords, limit, page, sort} = req.query;
       page = page || 1;
       limit = limit || 5;
+      sort = sort || "meetupDate"
       let offset = page * limit - limit;
       let meetups;
       if (!keywords) {
-        meetups = await meetupService.getAll(limit, offset);
+        meetups = await meetupService.getAll(limit, offset, sort);
       }
       if (keywords) {
-        meetups = await meetupService.getAllByKeywords(limit, offset, keywords);
+        meetups = await meetupService.getAllByKeywords(limit, offset, sort, keywords);
       }
       return res.json(meetups);
     } catch (e) {
@@ -43,7 +44,7 @@ class MeetupController {
         next(ErrorApi.badRequest("Validation error", validationErrors.array()));
       }
       const meetupDto = new MeetupDto(req.body);
-      const meetup = await meetupService.create(meetupDto);
+      const meetup = await meetupService.create(meetupDto, req.res.user.id);
       return res.json(meetup);
     } catch (e) {
       next(e);
@@ -75,7 +76,7 @@ class MeetupController {
       const { id } = req.params;
       const meetup = await meetupService.getById(id);
       if (!meetup || !id) {
-         next(ErrorApi.notFound("ID is not fount"));
+        next(ErrorApi.notFound("ID is not fount"));
       }
       await meetupService.destroy(id);
       return res.status(204).json({ message: "No Content" });
